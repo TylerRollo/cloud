@@ -4,18 +4,6 @@ locals {
   public_subnet_cidr  = "10.0.128.0/24"
 }
 
-data "aws_vpc" "default" {
-  filter {
-    name   = "isDefault"
-    values = ["true"]
-  }
-
-  filter {
-    name   = "tag:Name"
-    values = ["${var.project_name}-vpc"]
-  }
-}
-
 resource "aws_vpc" "main" {
   cidr_block = local.vpc_cidr
 }
