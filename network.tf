@@ -4,10 +4,7 @@
 
 # Use an existing VPC instead of creating a new one
 data "aws_vpc" "main" {
-  filter {
-    name   = "cidr-block"
-    values = ["10.0.0.0/16"]
-  }
+  default = false
 }
 
 resource "aws_subnet" "private" {
