@@ -5,7 +5,15 @@ locals {
 }
 
 data "aws_vpc" "default" {
-  default = false
+  filter {
+    name   = "isDefault"
+    values = ["true"]
+  }
+
+  filter {
+    name   = "tag:Name"
+    values = ["${var.project_name}-vpc"]
+  }
 }
 
 resource "aws_vpc" "main" {
