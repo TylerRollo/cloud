@@ -14,13 +14,38 @@ locals {
   ]
 }
 
-variable "instance_type" {
-  type    = string
-  default = "t2.micro"
+locals {
+  accepted_ami = [
+    "ubuntu",
+    "nginx"
+  ]
+}
+
+variable "ec2_instance_config_map" {
+  type = map(object({
+    instance_type = string
+    ami           = string
+  }))
+
+  default = {
+    instance_1 = {
+      instance_type = "t2.micro",
+      ami           = "ubuntu"
+    }
+  }
 
   validation {
-    condition     = contains(local.accepted_instance, var.instance_type)
-    error_message = "Instance size must be t2.micro or t3.micro"
+    condition = alltrue([
+      for instance in var.ec2_instance_config_map : contains(local.accepted_instance, instance.instance_type)
+    ])
+    error_message = "Instance type must be t2.micro or t3.micro"
+  }
+
+  validation {
+    condition = alltrue([
+      for instance in var.ec2_instance_config_map : contains(local.accepted_ami, instance.ami)
+    ])
+    error_message = "Image must either be 'ubuntu' or 'nginx'"
   }
 }
 
