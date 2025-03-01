@@ -12,7 +12,7 @@ data "aws_vpc" "main" {
 
 resource "aws_subnet" "private" {
   for_each   = var.private_subnet_config
-  vpc_id     = data.aws_vpc.main.id  # Ensure it uses an existing VPC
+  vpc_id     = data.aws_vpc.main.id # Ensure it uses an existing VPC
   cidr_block = each.value.cidr_block
 
   tags = {
@@ -23,7 +23,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_subnet" "public" {
   for_each   = var.public_subnet_config
-  vpc_id     = data.aws_vpc.main.id  # Ensure it uses an existing VPC
+  vpc_id     = data.aws_vpc.main.id # Ensure it uses an existing VPC
   cidr_block = each.value.cidr_block
 
   tags = {
