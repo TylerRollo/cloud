@@ -1,7 +1,5 @@
 locals {
-  vpc_cidr            = "10.0.0.0/16"
-  private_subnet_cidr = "10.0.0.0/24"
-  public_subnet_cidr  = "10.0.128.0/24"
+  vpc_cidr = "10.0.0.0/16"
 }
 
 resource "aws_vpc" "main" {
@@ -9,22 +7,24 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "private" {
+  for_each   = var.private_subnet_config
   vpc_id     = aws_vpc.main.id
-  cidr_block = local.private_subnet_cidr
+  cidr_block = each.value.cidr_block
 
   tags = {
     project_name = var.project_name
-    Name = "private-subnet"
+    Name         = "private-${each.key}"
   }
 }
 
 resource "aws_subnet" "public" {
+  for_each   = var.public_subnet_config
   vpc_id     = aws_vpc.main.id
-  cidr_block = local.public_subnet_cidr
+  cidr_block = each.value.cidr_block
 
   tags = {
     project_name = var.project_name
-    Name = "public-subnet"
+    Name         = "public-${each.key}"
   }
 }
 
