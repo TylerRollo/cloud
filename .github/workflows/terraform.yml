@@ -4,7 +4,8 @@ on:
   push:
     branches: [ "main" ]
   pull_request:
-
+    branches: [ "main" ]
+    
 permissions:
   contents: read
 
@@ -51,8 +52,3 @@ jobs:
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -input=false
-
-    # On push to "main", apply the Terraform plan to build or change infrastructure
-    - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
