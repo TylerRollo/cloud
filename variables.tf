@@ -33,6 +33,12 @@ variable "private_subnet_config" {
     cidr_block = string
   }))
 
+  default = {
+    subnet_1 = {
+      cidr_block = "10.0.0.0/24"
+    }
+  }
+
   # Ensure that all provided CIDR blocks are valid.
   validation {
     condition = alltrue([
@@ -46,6 +52,11 @@ variable "public_subnet_config" {
   type = map(object({
     cidr_block = string
   }))
+  default = {
+    subnet_1 = {
+      cidr_block = "10.0.128.0/24"
+    }
+  }
 
   # Ensure that all provided CIDR blocks are valid.
   validation {
