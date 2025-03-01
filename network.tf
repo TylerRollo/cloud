@@ -15,10 +15,20 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "private" {
   vpc_id     = aws_vpc.main.id
   cidr_block = local.private_subnet_cidr
+
+  tags = {
+    project_name = var.project_name
+    Name = "private-subnet"
+  }
 }
 
 resource "aws_subnet" "public" {
   vpc_id     = aws_vpc.main.id
   cidr_block = local.public_subnet_cidr
+
+  tags = {
+    project_name = var.project_name
+    Name = "public-subnet"
+  }
 }
 
