@@ -20,14 +20,3 @@ data "aws_ami" "ubuntu" {
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
-
-resource "aws_instance" "name" {
-  count         = 2
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
-
-  tags = {
-    project_name = var.project_name
-    Name         = "ec2_instance_${count.index}"
-  }
-}
