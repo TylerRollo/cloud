@@ -13,9 +13,14 @@ resource "aws_vpc" "main" {
 }
 */
 
+data "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+  default = false
+}
+
 resource "aws_subnet" "private" {
   for_each   = var.private_subnet_config
-  vpc_id     = local.cidr_block
+  vpc_id     = data.aws_vpc.main.id
   cidr_block = each.value.cidr_block
 
   tags = {
@@ -26,7 +31,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_subnet" "public" {
   for_each   = var.public_subnet_config
-  vpc_id     = local.cidr_block
+  vpc_id     = data.aws_vpc.main.id
   cidr_block = each.value.cidr_block
 
   tags = {
