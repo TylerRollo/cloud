@@ -2,25 +2,17 @@
 # VPC AND SUBNETS
 #
 
-locals {
-  cidr_block = "10.0.0.0/16"
-}
-
-# GITHUB ACTIONS KEEPS MAKING NEW VPC'S
-/**
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-}
-*/
-
+# Use an existing VPC instead of creating a new one
 data "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-  default = false
+  filter {
+    name   = "cidr-block"
+    values = ["10.0.0.0/16"]
+  }
 }
 
 resource "aws_subnet" "private" {
   for_each   = var.private_subnet_config
-  vpc_id     = data.aws_vpc.main.id
+  vpc_id     = data.aws_vpc.main.id  # Ensure it uses an existing VPC
   cidr_block = each.value.cidr_block
 
   tags = {
@@ -31,7 +23,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_subnet" "public" {
   for_each   = var.public_subnet_config
-  vpc_id     = data.aws_vpc.main.id
+  vpc_id     = data.aws_vpc.main.id  # Ensure it uses an existing VPC
   cidr_block = each.value.cidr_block
 
   tags = {
@@ -39,4 +31,3 @@ resource "aws_subnet" "public" {
     Name         = "public-${each.key}"
   }
 }
-
