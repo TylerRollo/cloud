@@ -23,6 +23,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Format Code
+      run: terraform fmt
+
     # Configure AWS credentials using GitHub Secrets
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
