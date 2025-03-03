@@ -55,12 +55,14 @@ variable "ec2_instance_config_map" {
 
 variable "private_subnet_config" {
   type = map(object({
-    cidr_block = string
+    cidr_block        = string
+    availability_zone = string
   }))
 
   default = {
     subnet_1 = {
-      cidr_block = "10.0.0.0/24"
+      cidr_block        = "10.0.1.0/24"
+      availability_zone = "us-east-2a"
     }
   }
 
@@ -75,11 +77,13 @@ variable "private_subnet_config" {
 
 variable "public_subnet_config" {
   type = map(object({
-    cidr_block = string
+    cidr_block        = string
+    availability_zone = string
   }))
   default = {
     subnet_1 = {
-      cidr_block = "10.0.128.0/24"
+      cidr_block        = "10.0.5.0/24"
+      availability_zone = "us-east-2a"
     }
   }
 
