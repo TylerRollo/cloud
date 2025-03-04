@@ -75,6 +75,10 @@ variable "public_subnet_config" {
       cidr_block        = "10.0.5.0/24"
       availability_zone = "us-east-2a"
     }
+    subnet_3 = {
+      cidr_block        = "10.0.6.0/24"
+      availability_zone = "us-east-2b"
+    }
   }
 
   # Ensure that all provided CIDR blocks are valid.

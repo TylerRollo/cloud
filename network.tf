@@ -27,7 +27,77 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-# PRIVATE
+# PRIVATE EC2
+resource "aws_route_table" "private_ec2_2a" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.public["subnet_1"].id  # For AZ 2A
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name = "private-ec2-route-table-2a"
+  }
+}
+
+resource "aws_route_table_association" "private_ec2_2a" {
+  subnet_id      = aws_subnet.private_ec2_2a.id
+  route_table_id = aws_route_table.private_ec2_2a.id
+}
+
+resource "aws_route_table" "private_ec2_2b" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.public["subnet_2"].id  # For AZ 2B
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name = "private-ec2-route-table-2b"
+  }
+}
+
+resource "aws_route_table_association" "private_ec2_2b" {
+  subnet_id      = aws_subnet.private_ec2_2b.id
+  route_table_id = aws_route_table.private_ec2_2b.id
+}
+
+
+# PRIVATE RDS 
+
+resource "aws_route_table" "private_rds" {
+  vpc_id = aws_vpc.main.id
+
+  # No need to add a route to the internet for RDS subnets
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name = "private-rds-route-table"
+  }
+}
+
+resource "aws_route_table_association" "private_rds" {
+  for_each = {
+    "private_rds_2a" = aws_subnet.private_rds_2a,
+    "private_rds_2b" = aws_subnet.private_rds_2b
+  }
+
+  subnet_id      = each.value.id
+  route_table_id = aws_route_table.private_rds.id
+}
+
 
 #
 # VPC AND SUBNETS
@@ -51,7 +121,7 @@ resource "aws_subnet" "private_ec2_2a" {
 
   tags = {
     project_name = var.project_name
-    Name = "private_ec2_2a"
+    Name         = "private_ec2_2a"
   }
 }
 
@@ -66,7 +136,7 @@ resource "aws_subnet" "private_rds_2a" {
 
   tags = {
     project_name = var.project_name
-    Name = "private_rds_2a"
+    Name         = "private_rds_2a"
   }
 }
 
@@ -82,7 +152,7 @@ resource "aws_subnet" "private_ec2_2b" {
 
   tags = {
     project_name = var.project_name
-    Name = "private_ec2_2b"
+    Name         = "private_ec2_2b"
   }
 }
 
@@ -97,7 +167,7 @@ resource "aws_subnet" "private_rds_2b" {
 
   tags = {
     project_name = var.project_name
-    Name = "private_rds_2b"
+    Name         = "private_rds_2b"
   }
 }
 
@@ -140,7 +210,8 @@ resource "aws_internet_gateway" "igw" {
 # NAT GATEWAY
 #
 
-resource "aws_nat_gateway" "example" {
+# PUBLIC
+resource "aws_nat_gateway" "public" {
   for_each      = aws_subnet.public
   subnet_id     = each.value.id
   allocation_id = aws_eip.nat[each.key].id
@@ -169,4 +240,5 @@ resource "aws_eip" "nat" {
     Name = "eip-${each.key}"
   }
 }
+
 
