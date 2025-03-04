@@ -5,6 +5,17 @@ variable "project_name" {
   default = "first_cloud_project"
 }
 
+variable "account_number" {
+  type      = number
+  sensitive = true
+}
+
+variable "region" {
+  type      = string
+  default   = "us-east-2"
+  sensitive = true
+}
+
 # EC2 INSTANCE
 
 locals {
@@ -53,27 +64,6 @@ variable "ec2_instance_config_map" {
 # SUBNETS
 #
 
-variable "private_subnet_config" {
-  type = map(object({
-    cidr_block        = string
-    availability_zone = string
-  }))
-
-  default = {
-    subnet_1 = {
-      cidr_block        = "10.0.1.0/24"
-      availability_zone = "us-east-2a"
-    }
-  }
-
-  # Ensure that all provided CIDR blocks are valid.
-  validation {
-    condition = alltrue([
-      for config in values(var.private_subnet_config) : can(cidrnetmask(config.cidr_block))
-    ])
-    error_message = "At least one of the provided CIDR blocks is not valid for private subnet."
-  }
-}
 
 variable "public_subnet_config" {
   type = map(object({
