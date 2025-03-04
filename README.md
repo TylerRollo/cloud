@@ -10,6 +10,7 @@
 4. Added Availability Zones
 5. (1). Internet Gateway added in addition to NAT gateways
 5. (2). and Elastic IP address
-6. Added Route table for public subnets
+6. Added Route table for public subnets and private subnets
+7. Creation of the EC2 and RDS Security Groups
 
 ![AWS 3-Tier Architecture](/img/image.png)

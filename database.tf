@@ -1,33 +1,34 @@
 #
-# DB Subnet Group
-#
-
-
-
-
-#
 # RDBs
 #
 
-/* 
+/*
+resource "aws_db_instance" "my_database" {
+  identifier              = "flashcard-db"
+  engine                  = "mysql"        
+  engine_version          = "8.0"         
+  instance_class          = "db.t2.micro" 
+  allocated_storage       = 20             
+  storage_type            = "gp2"           
+  db_name                 = "mydb"        
+  username                = "admin"         
+  password                = "password1234"  
+  vpc_security_group_ids  = [aws_security_group.rds_sg.id] 
+  publicly_accessible     = false           
+  backup_retention_period = 7               
+  multi_az                = true           
 
-resource "aws_db_instance" "flashcard_rds" {
-  identifier             = "flashcard-db"
-  engine                = "mysql"  # Use "postgres" for PostgreSQL
-  instance_class        = "db.t2.micro"  # Free-tier eligible
-  allocated_storage     = 20
-  storage_type          = "gp3"
-  username             = "admin"
-  password             = ""
-  db_subnet_group_name  = aws_db_subnet_group.flashcard_db_subnet_group.name
-  vpc_security_group_ids = [aws_security_group.flashcard_rds_sg.id]
-  multi_az             = false
-  publicly_accessible  = false  # Ensure it's private
-  skip_final_snapshot  = true  # Set to false in production
+  # Attach DB subnet group for correct subnet selection
+  db_subnet_group_name    = aws_subnet.private_rds_2a
+
+  lifecycle {
+    create_before_destroy = true  # Ensure a new DB instance is created before destroying the old one
+  }
 
   tags = {
-    Name = "flashcard-db"
+    Name = "MyBasicDatabase"
   }
 }
-
 */
+
+

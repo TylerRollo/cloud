@@ -106,6 +106,14 @@ resource "aws_route_table_association" "private_rds" {
 # Use an existing VPC instead of creating a new one
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name = "main-vpc"
+  }
 }
 
 # PRIVATE 
@@ -174,7 +182,7 @@ resource "aws_subnet" "private_rds_2b" {
 # PUBLIC
 resource "aws_subnet" "public" {
   for_each                = var.public_subnet_config
-  vpc_id                  = aws_vpc.main.id # Ensure it uses an existing VPC
+  vpc_id                  = aws_vpc.main.id
   cidr_block              = each.value.cidr_block
   availability_zone       = each.value.availability_zone
   map_public_ip_on_launch = false
@@ -241,4 +249,60 @@ resource "aws_eip" "nat" {
   }
 }
 
+
+#
+# SECURITY GROUPS
+#
+
+resource "aws_security_group" "ec2_sg" {
+  name        = "ec2_sg"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22 #TCP protocol for SSH port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535 # all outbound traffic is allowed to any destination
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "rds_sg" {
+  name        = "rds_sg"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306 # default port used by MySQL
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]  # Allow EC2 instances to connect
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
