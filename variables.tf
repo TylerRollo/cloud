@@ -62,6 +62,11 @@ variable "ec2_instance_config_map" {
   }
 }
 
+variable "keypair" {
+  type      = string
+  sensitive = true
+}
+
 #
 # SUBNETS
 #
@@ -97,9 +102,11 @@ variable "public_subnet_config" {
 #
 
 variable "db_username" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "db_password" {
-  type = string
+  type      = string
+  sensitive = true
 }
