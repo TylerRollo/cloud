@@ -24,10 +24,12 @@ resource "aws_subnet" "private" {
 }
 
 resource "aws_subnet" "public" {
-  for_each          = var.public_subnet_config
-  vpc_id            = aws_vpc.main.id # Ensure it uses an existing VPC
-  cidr_block        = each.value.cidr_block
-  availability_zone = each.value.availability_zone
+  for_each                = var.public_subnet_config
+  vpc_id                  = aws_vpc.main.id # Ensure it uses an existing VPC
+  cidr_block              = each.value.cidr_block
+  availability_zone       = each.value.availability_zone
+  map_public_ip_on_launch = false
+
 
   lifecycle {
     create_before_destroy = true
@@ -61,7 +63,7 @@ resource "aws_internet_gateway_attachment" "example" {
 #
 
 resource "aws_nat_gateway" "example" {
-  for_each = aws_subnet.public
+  for_each  = aws_subnet.public
   subnet_id = each.value.id
 
   allocation_id = aws_eip.nat[each.key].id
@@ -75,7 +77,7 @@ resource "aws_nat_gateway" "example" {
 
 resource "aws_eip" "nat" {
   for_each = aws_subnet.public
-  
+
   tags = {
     Name = "eip-${each.key}"
   }
