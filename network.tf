@@ -33,7 +33,7 @@ resource "aws_route_table" "private_ec2_2a" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.public["subnet_1"].id  # For AZ 2A
+    nat_gateway_id = aws_nat_gateway.public["subnet_1"].id # For AZ 2A
   }
 
   lifecycle {
@@ -55,7 +55,7 @@ resource "aws_route_table" "private_ec2_2b" {
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.public["subnet_2"].id  # For AZ 2B
+    nat_gateway_id = aws_nat_gateway.public["subnet_2"].id # For AZ 2B
   }
 
   lifecycle {
@@ -255,8 +255,8 @@ resource "aws_eip" "nat" {
 #
 
 resource "aws_security_group" "ec2_sg" {
-  name        = "ec2_sg"
-  vpc_id      = aws_vpc.main.id
+  name   = "ec2_sg"
+  vpc_id = aws_vpc.main.id
 
   ingress {
     from_port   = 80
@@ -288,14 +288,14 @@ resource "aws_security_group" "ec2_sg" {
 }
 
 resource "aws_security_group" "rds_sg" {
-  name        = "rds_sg"
-  vpc_id      = aws_vpc.main.id
+  name   = "rds_sg"
+  vpc_id = aws_vpc.main.id
 
   ingress {
     from_port   = 3306
     to_port     = 3306 # default port used by MySQL
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]  # Allow EC2 instances to connect
+    cidr_blocks = ["10.0.0.0/16"] # Allow EC2 instances to connect
   }
 
   egress {
@@ -303,6 +303,19 @@ resource "aws_security_group" "rds_sg" {
     to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_db_subnet_group" "main" {
+  name = "my-db-subnet-group"
+  subnet_ids = [
+    aws_subnet.private_rds_2a.id,
+    aws_subnet.private_rds_2b.id
+  ]
+  description = "Database Subnet Group for Multi-AZ Deployment"
+
+  tags = {
+    Name = "MyDatabaseSubnetGroup"
   }
 }
 

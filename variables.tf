@@ -16,7 +16,9 @@ variable "region" {
   sensitive = true
 }
 
+#
 # EC2 INSTANCE
+#
 
 locals {
   accepted_instance = [
@@ -88,4 +90,16 @@ variable "public_subnet_config" {
     ])
     error_message = "At least one of the provided CIDR blocks is not valid for public subnet."
   }
+}
+
+#
+# RDS CREDENTIALS
+#
+
+variable "db_username" {
+  type = string
+}
+
+variable "db_password" {
+  type = string
 }
