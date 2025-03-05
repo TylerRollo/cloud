@@ -20,6 +20,18 @@ data "aws_ami" "ubuntu" {
 
 # PRIVATE
 
+resource "aws_instance" "private_backends" {
+  count           = 2                      # Deploying two backend instances in different AZs
+  ami             = data.aws_ami.ubuntu.id # Choose an appropriate Ubuntu AMI
+  instance_type   = "t2.micro"
+  subnet_id       = element([aws_subnet.private_ec2_2a.id, aws_subnet.private_ec2_2b.id], count.index)
+  security_groups = [aws_security_group.backend_sg.id]
+  key_name        = aws_key_pair.my_key_pair.key_name
+
+  tags = {
+    Name = "private-backend-${count.index + 1}"
+  }
+}
 
 # PUBLIC
 
@@ -30,7 +42,7 @@ resource "aws_instance" "app_2a" {
   associate_public_ip_address = true
   key_name                    = aws_key_pair.my_key_pair.key_name
 
-  security_groups = [aws_security_group.ec2_sg.id]
+  security_groups = [aws_security_group.frontend_sg.id]
 
   tags = {
     Name = "react-app-instance_2a"
@@ -56,7 +68,7 @@ resource "aws_instance" "app_2b" {
   associate_public_ip_address = true
   key_name                    = aws_key_pair.my_key_pair.key_name
 
-  security_groups = [aws_security_group.ec2_sg.id]
+  security_groups = [aws_security_group.frontend_sg.id]
 
   tags = {
     Name = "react-app-instance_2b"

@@ -98,7 +98,7 @@ variable "public_subnet_config" {
 }
 
 #
-# RDS CREDENTIALS
+# RDS
 #
 
 variable "db_username" {
@@ -109,4 +109,9 @@ variable "db_username" {
 variable "db_password" {
   type      = string
   sensitive = true
+}
+
+variable "skip_final_snapshot" {
+  type    = bool
+  default = false
 }

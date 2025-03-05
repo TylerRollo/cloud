@@ -17,6 +17,7 @@ resource "aws_db_instance" "my_database" {
   backup_retention_period = 7
   multi_az                = true
   db_subnet_group_name    = aws_db_subnet_group.main.name # Ensure your DB is in the right subnets
+  skip_final_snapshot     = var.skip_final_snapshot
 
   lifecycle {
     create_before_destroy = true # Ensure a new DB instance is created before destroying the old one

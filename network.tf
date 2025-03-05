@@ -254,8 +254,8 @@ resource "aws_eip" "nat" {
 # SECURITY GROUPS
 #
 
-resource "aws_security_group" "ec2_sg" {
-  name   = "ec2_sg"
+resource "aws_security_group" "frontend_sg" {
+  name   = "frontend_sg"
   vpc_id = aws_vpc.main.id
 
   ingress {
@@ -279,6 +279,13 @@ resource "aws_security_group" "ec2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port   = 0
     to_port     = 65535 # all outbound traffic is allowed to any destination
@@ -286,6 +293,37 @@ resource "aws_security_group" "ec2_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+resource "aws_security_group" "backend_sg" {
+  name   = "backend_sg"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port       = 3000
+    to_port         = 3000
+    protocol        = "tcp"
+    security_groups = [aws_security_group.frontend_sg.id] # Allow only from frontend EC2 SG
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22 #TCP protocol for SSH port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "backend-security-group"
+  }
+}
+
 
 resource "aws_security_group" "rds_sg" {
   name   = "rds_sg"
@@ -296,6 +334,13 @@ resource "aws_security_group" "rds_sg" {
     to_port     = 3306 # default port used by MySQL
     protocol    = "tcp"
     cidr_blocks = ["10.0.0.0/16"] # Allow EC2 instances to connect
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22 #TCP protocol for SSH port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {

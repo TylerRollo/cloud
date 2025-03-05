@@ -14,12 +14,13 @@
 6. Added Route table for public subnets and private subnets
 7. Creation of the EC2 and RDS Security Groups
 8. Created a MySQL DB
-9. Added 2 EC2 instances into Public subnets using Ubuntu
-
 ### Current Architecture: 
 ![Current Architecture at Step 8.](/img/partial_architecture.jpeg)
-
-
+9. Added 2 EC2 instances into Public subnets using Ubuntu
+10. Deployed React front-end to EC2 Instance
+11. Added 2 EC2 instances into private subnets using Ubuntu
+12. created a new security group for the private ec2 instances
+## Current Arcitecutre: 
 
 ### Goal Architecture:
 ![AWS 3-Tier Architecture](/img/image.png)
