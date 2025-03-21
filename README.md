@@ -1,5 +1,4 @@
 # 3-Tier Web-Hosting Application (AWS)
-(not guided)
 
 ### Timeline:
 1. Providers
